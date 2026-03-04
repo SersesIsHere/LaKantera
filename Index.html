@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>La Kantera — Radio Rock Español</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --negro: #0d0c0a;
+      --tinta: #1a1815;
+      --crema: #f0ebe0;
+      --crema-oscura: #d9d0bc;
+      --rojo: #b5261e;
+      --rojo-oscuro: #8a1c16;
+      --dorado: #c9a84c;
+      --gris: #6b6560;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--negro);
+      color: var(--crema);
+      font-family: 'Libre Baskerville', Georgia, serif;
+      overflow-x: hidden;
+    }
+
+    /* GRAIN OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.5;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 100%, rgba(181,38,30,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%);
+    }
+
+    .header-rule {
+      width: 1px;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--dorado));
+      margin-bottom: 2.5rem;
+      animation: fadeDown 1.2s ease forwards;
+    }
+
+    .header-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--dorado);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 1s 0.3s ease both;
+    }
+
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(5rem, 15vw, 11rem);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: var(--crema);
+      margin-bottom: 0.2em;
+      animation: fadeUp 1s 0.5s ease both;
+      position: relative;
+    }
+
+    .header-title span {
+      color: var(--rojo);
+      font-style: italic;
+    }
+
+    .header-subtitle {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      color: var(--crema-oscura);
+      letter-spacing: 0.05em;
+      margin-top: 1.2rem;
+      animation: fadeUp 1s 0.7s ease both;
+    }
+
+    .header-bottom-rule {
+      width: 60px;
+      height: 1px;
+      background: var(--dorado);
+      margin: 2.5rem auto 0;
+      animation: fadeUp 1s 0.9s ease both;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: var(--gris);
+      text-transform: uppercase;
+      animation: fadeUp 1s 1.2s ease both, bob 2s 2.5s ease-in-out infinite;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,12,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 1.2rem;
+      color: var(--crema);
+      letter-spacing: 0.05em;
+    }
+
+    .nav-logo span { color: var(--rojo); font-style: italic; }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--crema-oscura);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--dorado); }
+
+    /* ── PLAYER ── */
+    .player-section {
+      background: var(--tinta);
+      border-top: 1px solid rgba(201,168,76,0.15);
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+      padding: 3rem 2rem;
+    }
+
+    .player-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .player-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--dorado);
+    }
+
+    .player-box {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 2px;
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .play-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--rojo);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .play-btn:hover { background: var(--rojo-oscuro); transform: scale(1.05); }
+
+    .play-btn svg { width: 24px; height: 24px; fill: white; margin-left: 3px; }
+    .play-btn.playing svg { margin-left: 0; }
+
+    .player-info { flex: 1; min-width: 160px; }
+
+    .player-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--crema);
+    }
+
+    .player-meta {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--gris);
+      letter-spacing: 0.1em;
+      margin-top: 0.4rem;
+    }
+
+    .on-air {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--rojo);
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--rojo);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .stream-note {
+      font-family: 'Libre Baskerville', serif;
+      font-style: italic;
+      font-size: 0.8rem;
+      color: var(--gris);
+      text-align: center;
+    }
+
+    audio { display: none; }
+
+    /* ── SECCIONES ── */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .section-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--dorado);
+      letter-spacing: 0.2em;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900;
+      color: var(--crema);
+      line-height: 1.05;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(201,168,76,0.2);
+    }
+
+    /* ── NOTICIAS ── */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5px;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.15);
+    }
+
+    .news-card {
+      background: var(--tinta);
+      padding: 2rem 1.8rem;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .news-card:hover { background: #211f1c; }
+
+    .news-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rojo);
+      margin-bottom: 0.8rem;
+    }
+
+    .news-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--crema);
+      line-height: 1.3;
+      margin-bottom: 0.8rem;
+    }
+
+    .news-excerpt {
+      font-size: 0.85rem;
+      color: var(--gris);
+      line-height: 1.65;
+    }
+
+    .news-date {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--dorado);
+      letter-spacing: 0.1em;
+      margin-top: 1.2rem;
+      display: block;
+    }
+
+    /* ── SOBRE EL PROGRAMA ── */
+    .about-layout {
+      display: grid;
+      grid-template-columns: 1fr 2px 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .about-divider {
+      background: rgba(201,168,76,0.2);
+      align-self: stretch;
+    }
+
+    .about-quote {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: var(--crema);
+      line-height: 1.4;
+      border-left: 3px solid var(--rojo);
+      padding-left: 1.5rem;
+    }
+
+    .about-text {
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: var(--crema-oscura);
+    }
+
+    .about-text p + p { margin-top: 1rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(201,168,76,0.15);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--crema);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-logo span { color: var(--rojo); font-style: italic; }
+
+    .footer-tagline {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: var(--gris);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .footer-copy {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--gris);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── ANIMACIONES ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bob {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .about-layout { grid-template-columns: 1fr; }
+      .about-divider { display: none; }
+      .player-box { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<header>
+  <div class="header-rule"></div>
+  <p class="header-eyebrow">Radio · Rock Español · Desde las raíces</p>
+  <h1 class="header-title">La <span>Kantera</span></h1>
+  <p class="header-subtitle">El sonido que se labra, no se hereda</p>
+  <div class="header-bottom-rule"></div>
+  <p class="scroll-hint">↓ Escucha &amp; descubre</p>
+</header>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">La <span>Kantera</span></div>
+  <ul class="nav-links">
+    <li><a href="#en-directo">En directo</a></li>
+    <li><a href="#noticias">Noticias</a></li>
+    <li><a href="#sobre">El programa</a></li>
+  </ul>
+</nav>
+
+<!-- PLAYER -->
+<div class="player-section" id="en-directo">
+  <div class="player-inner">
+    <p class="player-label">— Emisión en directo —</p>
+    <div class="player-box">
+      <button class="play-btn" id="playBtn" onclick="togglePlay()" aria-label="Reproducir">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <div class="player-info">
+        <div class="player-title">La Kantera · En vivo</div>
+        <div class="player-meta">Rock Español Indie · Programa semanal</div>
+      </div>
+      <div class="on-air">
+        <div class="dot"></div>
+        On Air
+      </div>
+    </div>
+    <p class="stream-note">
+      El reproductor se conectará automáticamente cuando tu padre esté emitiendo en directo.<br>
+      <em>Enlace del stream de Listen2MyRadio pendiente de configurar.</em>
+    </p>
+    <audio id="radioPlayer" preload="none">
+      <!-- Aquí irá: <source src="URL_DEL_STREAM_DE_LISTEN2MYRADIO" type="audio/mpeg"> -->
+    </audio>
+  </div>
+</div>
+
+<!-- NOTICIAS -->
+<section id="noticias">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Últimas noticias</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="news-grid">
+    <article class="news-card">
+      <div class="news-tag">Entrevista</div>
+      <h3 class="news-headline">Los Planetas vuelven con nuevo material tras cinco años</h3>
+      <p class="news-excerpt">La banda granadina regresa con un disco grabado íntegramente en analógico, fiel a su sonido más crudo y experimental.</p>
+      <span class="news-date">28 Feb · 2026</span>
+    </article>
+    <article class="news-card">
+      <div class="news-tag">Novedades</div>
+      <h3 class="news-headline">Sidonie presenta «Electra» en Madrid y Barcelona</h3>
+      <p class="news-excerpt">La gira arranca en primavera con dos fechas especiales en sala pequeña, formato íntimo y acústico.</p>
+      <span class="news-date">21 Feb · 2026</span>
+    </article>
+    <article class="news-card">
+      <div class="news-tag">Recomendación</div>
+      <h3 class="news-headline">Disco de la semana: «Marea Baja» de Rufus T. Firefly</h3>
+      <p class="news-excerpt">Un álbum que mezcla el pop rockero de los 90 con letras que hablan del desarraigo urbano con una honestidad brutal.</p>
+      <span class="news-date">14 Feb · 2026</span>
+    </article>
+  </div>
+</section>
+
+<!-- SOBRE EL PROGRAMA -->
+<section id="sobre" style="border-top: 1px solid rgba(201,168,76,0.1);">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">El programa</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="about-layout">
+    <blockquote class="about-quote">
+      "El rock español indie no es un género. Es una forma de mirar el mundo."
+    </blockquote>
+    <div class="about-divider"></div>
+    <div class="about-text">
+      <p>La Kantera nació de la convicción de que hay un rock hecho en España que merece ser escuchado, discutido y celebrado. Un sonido que viene de los garajes, de las salas pequeñas, de las ciudades y los pueblos.</p>
+      <p>Cada semana, el programa recorre novedades, clásicos olvidados y entrevistas con los artistas que siguen labrando ese sonido desde las raíces.</p>
+      <p>Sin prisas. Con criterio. Desde el amor por la música.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">La <span>Kantera</span></div>
+  <div class="footer-tagline">Rock Español Indie · Emisión semanal</div>
+  <div class="footer-copy">© 2026 La Kantera · Todos los derechos reservados</div>
+</footer>
+
+<script>
+  let playing = false;
+  const audio = document.getElementById('radioPlayer');
+  const btn = document.getElementById('playBtn');
+
+  function togglePlay() {
+    if (!playing) {
+      // Cuando tengas la URL del stream, audio.src se asignará aquí
+      // audio.src = 'TU_URL_DEL_STREAM';
+      audio.play().catch(() => {
+        alert('El stream no está disponible en este momento. Inténtalo cuando el programa esté en emisión.');
+      });
+      btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+      playing = true;
+    } else {
+      audio.pause();
+      btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-left:3px"><path d="M8 5v14l11-7z"/></svg>`;
+      playing = false;
+    }
+  }
+
+  // Intersection observer para animar secciones al hacer scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.news-card, .about-quote, .about-text').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
