@@ -1,0 +1,19 @@
+backend:
+  name: github
+  repo: SersesIsHere/lakantera
+  branch: main
+
+media_folder: "images"
+
+collections:
+  - name: "noticias"
+    label: "Noticias"
+    folder: "_noticias"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Título", name: "title", widget: "string" }
+      - { label: "Etiqueta", name: "tag", widget: "string", default: "Novedad" }
+      - { label: "Resumen", name: "excerpt", widget: "text" }
+      - { label: "Fecha", name: "date", widget: "datetime" }
+      - { label: "Contenido", name: "body", widget: "markdown" }
